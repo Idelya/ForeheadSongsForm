@@ -37,7 +37,7 @@ const SongForm: React.FC = () => {
   const handleSubmit = async (values: SongFormValues, { resetForm }) => {
     setLoading(true);
     try {
-      await saveSong(values);
+      await saveSong({ ...values, lyrics: values.lyrics.replace(/\n/g, "$") });
       resetForm({ values: initialValues });
     } catch (error) {
       console.log(error);
