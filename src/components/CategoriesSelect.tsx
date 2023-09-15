@@ -24,8 +24,6 @@ interface CategoriesSelectProps {
   onChange: (values: CategoryType[]) => void;
 }
 
-const filter = createFilterOptions<CategoryType>();
-
 export const CategoriesSelect = ({
   values,
   onChange,
