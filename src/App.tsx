@@ -1,8 +1,16 @@
+import { Container, Typography } from "@mui/material";
+import SongForm from "./components/SongForm";
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header"></header>
-    </div>
+    <Container>
+      <main>
+        <Typography component="h1" variant="h3">
+          Add new song
+        </Typography>
+        <SongForm />
+      </main>
+    </Container>
   );
 }
 
