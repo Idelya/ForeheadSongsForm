@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
-import { Button, TextField, Typography, styled } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+  styled,
+} from "@mui/material";
 import { CategoriesSelect } from "./CategoriesSelect";
 import { saveSong } from "../api/writeData";
 import { CategoryType } from "../types";
@@ -26,9 +32,26 @@ const StyledWrapper = styled("div")({
 });
 
 const SongForm: React.FC = () => {
-  const handleSubmit = (values: SongFormValues) => {
-    saveSong(values);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (values: SongFormValues, { resetForm }) => {
+    setLoading(true);
+    try {
+      await saveSong(values);
+      resetForm({ values: initialValues });
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
+
+  if (loading) {
+    return (
+      <StyledWrapper>
+        <CircularProgress />
+      </StyledWrapper>
+    );
+  }
 
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -37,7 +60,7 @@ const SongForm: React.FC = () => {
           <StyledWrapper>
             <TextField
               name="title"
-              label="Title"
+              label="Tytuł piosenki"
               fullWidth
               variant="outlined"
               margin="dense"
@@ -49,7 +72,7 @@ const SongForm: React.FC = () => {
             />
             <TextField
               name="source"
-              label="Source"
+              label="Autor lub film w którym występuje"
               fullWidth
               variant="outlined"
               margin="dense"
@@ -59,9 +82,13 @@ const SongForm: React.FC = () => {
               error={!!(props.errors.source && props.touched.source)}
               required
             />
+            <Typography>
+              Podaj charakterystyczny fragment tekstu piosenki - aby łatwiej
+              było uczestnikom przypomnieć sobie o którą piosenkę chodzi.
+            </Typography>
             <TextField
               name="lyrics"
-              label="Lyrics"
+              label="Tekst"
               fullWidth
               variant="outlined"
               margin="dense"
@@ -74,15 +101,18 @@ const SongForm: React.FC = () => {
               required
             />
             <Typography>
-              Select the categories this song fits into or add a new one:
+              Podaj co najmniej jedną kategorię do której pasuje ta piosenka.{" "}
+              <br />
+              Możesz również dodać nową kategorię.
             </Typography>
             <CategoriesSelect
               values={values.categories}
+              loading={loading}
               onChange={(e) => setFieldValue("categories", e)}
             />
 
             <Button variant="contained" type="submit" color="primary" fullWidth>
-              Submit
+              Zapisz
             </Button>
           </StyledWrapper>
         </Form>

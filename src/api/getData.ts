@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "./firebase";
 import { CategoryType } from "../types";
 
-export const useCategories = () => {
+export const useCategories = (triggerRefresh) => {
   const [categories, setCategries] = useState<CategoryType[]>([]);
 
   const fetchCategories = async () => {
@@ -17,8 +17,10 @@ export const useCategories = () => {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (!triggerRefresh) {
+      fetchCategories();
+    }
+  }, [triggerRefresh]);
 
   return { categories };
 };

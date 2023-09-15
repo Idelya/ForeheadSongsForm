@@ -6,7 +6,7 @@ function App() {
     <Container>
       <main>
         <Typography component="h1" variant="h3">
-          Add new song
+          Piosenki do czółka
         </Typography>
         <SongForm />
       </main>

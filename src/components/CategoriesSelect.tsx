@@ -16,15 +16,17 @@ const StyledInnerWrapper = styled("div")({
 
 interface CategoriesSelectProps {
   values: CategoryType[];
+  loading: boolean;
   onChange: (values: CategoryType[]) => void;
 }
 
 export const CategoriesSelect = ({
   values,
+  loading,
   onChange,
 }: CategoriesSelectProps) => {
-  const { categories } = useCategories();
-
+  const { categories } = useCategories(loading);
+  console.log(categories);
   return (
     <StyledWrapper>
       <StyledInnerWrapper>
