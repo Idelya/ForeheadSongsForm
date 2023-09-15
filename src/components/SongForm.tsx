@@ -2,12 +2,14 @@ import React from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import { Button, TextField, Typography, styled } from "@mui/material";
 import { CategoriesSelect } from "./CategoriesSelect";
+import { saveSong } from "../api/writeData";
+import { CategoryType } from "../types";
 
 interface SongFormValues {
   title: string;
   source: string;
   lyrics: string;
-  categories: string[];
+  categories: CategoryType[];
 }
 
 const initialValues: SongFormValues = {
@@ -25,7 +27,7 @@ const StyledWrapper = styled("div")({
 
 const SongForm: React.FC = () => {
   const handleSubmit = (values: SongFormValues) => {
-    console.log(values);
+    saveSong(values);
   };
 
   return (

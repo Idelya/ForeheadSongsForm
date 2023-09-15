@@ -6,6 +6,7 @@ import {
   styled,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { CategoryType } from "../types";
 
 const StyledList = styled(List)({
   display: "flex",
@@ -34,14 +35,14 @@ const StyledIconButton = styled(IconButton)({
 });
 
 interface CardOptionsProps {
-  values: string[];
-  onDelete: (value: string) => void;
+  values: CategoryType[];
+  onDelete: (value: CategoryType) => void;
 }
 export const CardOptions = ({ values, onDelete }: CardOptionsProps) => (
   <StyledList>
     {values.map((val) => (
       <StyledListItem
-        key={val}
+        key={val.name}
         secondaryAction={
           <StyledIconButton
             disableTouchRipple
@@ -55,7 +56,7 @@ export const CardOptions = ({ values, onDelete }: CardOptionsProps) => (
           </StyledIconButton>
         }
       >
-        <ListItemText primary={val} />
+        <ListItemText primary={val.name} />
       </StyledListItem>
     ))}
   </StyledList>
