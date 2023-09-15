@@ -26,7 +26,7 @@ export const CategoriesSelect = ({
   onChange,
 }: CategoriesSelectProps) => {
   const { categories } = useCategories(loading);
-  console.log(categories);
+
   return (
     <StyledWrapper>
       <StyledInnerWrapper>

@@ -35,6 +35,7 @@ const isSongExistInCategory = async (
     const ids = querySnapshot.docs.map((doc) => doc.id);
     return ids.length ? ids[0] : undefined;
   });
+  console.log(id);
   return !!id;
 };
 
@@ -65,11 +66,12 @@ export const saveSong = async (data: SongFormInputType) => {
   for (const element of categoriesIds) {
     const categoryDocRef = doc(categoryCollRef, element);
     const songsCollRef = collection(categoryDocRef, "songs");
-    const isExist = isSongExistInCategory(
+    const isExist = await isSongExistInCategory(
       songsCollRef,
       data.title,
       data.source
     );
+    console.log(element, isExist);
     if (!isExist) {
       const docRef = await addDoc(songsCollRef, song);
       console.log(
