@@ -1,9 +1,4 @@
-import {
-  Autocomplete,
-  TextField,
-  createFilterOptions,
-  styled,
-} from "@mui/material";
+import { Autocomplete, TextField, styled } from "@mui/material";
 import { CardOptions } from "./CardOptions";
 import { useCategories } from "../api/getData";
 import { CategoryType } from "../types";
