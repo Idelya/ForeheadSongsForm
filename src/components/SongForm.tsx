@@ -11,6 +11,8 @@ import { CategoriesSelect } from "./CategoriesSelect";
 import * as yup from "yup";
 import { saveSong } from "../api/writeData";
 import { CategoryType } from "../types";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface SongFormValues {
   title: string;
@@ -61,15 +63,23 @@ const SongForm: React.FC = () => {
   const handleSubmit = async (values: SongFormValues, { resetForm }) => {
     setLoading(true);
     try {
-      await saveSong({
+      const { countExisting, countAdded } = await saveSong({
         ...values,
         title: values.title.toLowerCase(),
         source: values.source.toLowerCase(),
         lyrics: values.lyrics.replace(/\n/g, "$"),
       });
       resetForm({ values: initialValues });
+      toast.success(
+        `Dodano piosenkę ${values.title} do ${countAdded} kategorii. Istniała już w ${countExisting} kategorii.`,
+        {
+          position: toast.POSITION.TOP_RIGHT,
+        }
+      );
     } catch (error) {
-      console.log(error);
+      toast.error(`Error: ${error.message}`, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
     }
     setLoading(false);
   };
@@ -83,77 +93,85 @@ const SongForm: React.FC = () => {
   }
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      validationSchema={validationSchema}
-    >
-      {({ values, setFieldValue, ...props }) => (
-        <Form>
-          <StyledWrapper>
-            <TextField
-              name="title"
-              label="Tytuł piosenki"
-              fullWidth
-              variant="outlined"
-              margin="dense"
-              onChange={props.handleChange}
-              onBlur={props.handleBlur}
-              helperText={<ErrorMessage name="title" />}
-              error={!!(props.errors.title && props.touched.title)}
-              required
-            />
-            <TextField
-              name="source"
-              label="Autor lub film w którym występuje"
-              fullWidth
-              variant="outlined"
-              margin="dense"
-              onChange={props.handleChange}
-              onBlur={props.handleBlur}
-              helperText={<ErrorMessage name="source" />}
-              error={!!(props.errors.source && props.touched.source)}
-              required
-            />
-            <Typography>
-              Podaj charakterystyczny fragment tekstu piosenki - aby łatwiej
-              było uczestnikom przypomnieć sobie o którą piosenkę chodzi.
-            </Typography>
-            <TextField
-              name="lyrics"
-              label="Tekst"
-              fullWidth
-              variant="outlined"
-              margin="dense"
-              onChange={props.handleChange}
-              onBlur={props.handleBlur}
-              helperText={<ErrorMessage name="lyrics" />}
-              multiline
-              rows={4}
-              error={!!(props.errors.lyrics && props.touched.lyrics)}
-              required
-            />
-            <Typography>
-              Podaj co najmniej jedną kategorię do której pasuje ta piosenka.{" "}
-              <br />
-              Możesz również dodać nową kategorię klikając enter.
-            </Typography>
-            <CategoriesSelect
-              values={values.categories}
-              loading={loading}
-              onChange={(e) => setFieldValue("categories", e)}
-            />
-            <StyledErrorMessage>
-              <ErrorMessage name="categories" />
-            </StyledErrorMessage>
+    <div>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+      >
+        {({ values, setFieldValue, ...props }) => (
+          <Form>
+            <StyledWrapper>
+              <TextField
+                name="title"
+                label="Tytuł piosenki"
+                fullWidth
+                variant="outlined"
+                margin="dense"
+                onChange={props.handleChange}
+                onBlur={props.handleBlur}
+                helperText={<ErrorMessage name="title" />}
+                error={!!(props.errors.title && props.touched.title)}
+                required
+              />
+              <TextField
+                name="source"
+                label="Autor lub film w którym występuje"
+                fullWidth
+                variant="outlined"
+                margin="dense"
+                onChange={props.handleChange}
+                onBlur={props.handleBlur}
+                helperText={<ErrorMessage name="source" />}
+                error={!!(props.errors.source && props.touched.source)}
+                required
+              />
+              <Typography>
+                Podaj charakterystyczny fragment tekstu piosenki - aby łatwiej
+                było uczestnikom przypomnieć sobie o którą piosenkę chodzi.
+              </Typography>
+              <TextField
+                name="lyrics"
+                label="Tekst"
+                fullWidth
+                variant="outlined"
+                margin="dense"
+                onChange={props.handleChange}
+                onBlur={props.handleBlur}
+                helperText={<ErrorMessage name="lyrics" />}
+                multiline
+                rows={4}
+                error={!!(props.errors.lyrics && props.touched.lyrics)}
+                required
+              />
+              <Typography>
+                Podaj co najmniej jedną kategorię do której pasuje ta piosenka.{" "}
+                <br />
+                Możesz również dodać nową kategorię klikając enter.
+              </Typography>
+              <CategoriesSelect
+                values={values.categories}
+                loading={loading}
+                onChange={(e) => setFieldValue("categories", e)}
+              />
+              <StyledErrorMessage>
+                <ErrorMessage name="categories" />
+              </StyledErrorMessage>
 
-            <Button variant="contained" type="submit" color="primary" fullWidth>
-              Zapisz
-            </Button>
-          </StyledWrapper>
-        </Form>
-      )}
-    </Formik>
+              <Button
+                variant="contained"
+                type="submit"
+                color="primary"
+                fullWidth
+              >
+                Zapisz
+              </Button>
+            </StyledWrapper>
+          </Form>
+        )}
+      </Formik>
+      <ToastContainer />
+    </div>
   );
 };
 
