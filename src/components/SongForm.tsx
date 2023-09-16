@@ -12,6 +12,7 @@ import * as yup from "yup";
 import { saveSong } from "../api/writeData";
 import { CategoryType } from "../types";
 import { toast, ToastContainer } from "react-toastify";
+import Paper from "@mui/material/Paper";
 import "react-toastify/dist/ReactToastify.css";
 
 interface SongFormValues {
@@ -30,8 +31,13 @@ const initialValues: SongFormValues = {
 
 const StyledWrapper = styled("div")({
   display: "flex",
+  marginTop: "10px",
   gap: "10px",
   flexDirection: "column",
+});
+
+const StyledFormWrapper = styled("div")({
+  marginTop: "24px",
 });
 
 const StyledErrorMessage = styled("p")({
@@ -93,7 +99,10 @@ const SongForm: React.FC = () => {
   }
 
   return (
-    <div>
+    <StyledFormWrapper>
+      <Typography component="h2" variant="h4">
+        Formularz
+      </Typography>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -171,7 +180,7 @@ const SongForm: React.FC = () => {
         )}
       </Formik>
       <ToastContainer />
-    </div>
+    </StyledFormWrapper>
   );
 };
 
