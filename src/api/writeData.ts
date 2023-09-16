@@ -74,9 +74,9 @@ export const saveSong = async (data: SongFormInputType) => {
         " to category ",
         element
       );
-      countAdded = +1;
+      countAdded = countAdded + 1;
     } else {
-      countExisting = +1;
+      countExisting = countExisting + 1;
     }
   }
   return { countExisting, countAdded };

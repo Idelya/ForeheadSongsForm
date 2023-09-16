@@ -135,8 +135,9 @@ const SongForm: React.FC = () => {
                 required
               />
               <Typography>
-                Podaj charakterystyczny fragment tekstu piosenki - aby łatwiej
-                było uczestnikom przypomnieć sobie o którą piosenkę chodzi.
+                Podaj charakterystyczny fragment tekstu piosenki - ok 4 wersy -
+                aby łatwiej było uczestnikom przypomnieć sobie o którą piosenkę
+                chodzi.
               </Typography>
               <TextField
                 name="lyrics"
