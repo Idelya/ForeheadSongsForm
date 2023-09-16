@@ -22,6 +22,7 @@ const StyledListItem = styled(ListItem)({
   height: "28px",
   padding: "2px 48px 2px 16px",
   width: "fit-content",
+  textTransform: "capitalize",
 });
 
 const StyledIconButton = styled(IconButton)({

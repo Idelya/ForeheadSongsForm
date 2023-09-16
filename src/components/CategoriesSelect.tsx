@@ -1,4 +1,4 @@
-import { Autocomplete, TextField, styled } from "@mui/material";
+import { Autocomplete, TextField, Typography, styled } from "@mui/material";
 import { CardOptions } from "./CardOptions";
 import { useCategories } from "../api/getData";
 import { CategoryType } from "../types";
@@ -12,6 +12,10 @@ const StyledWrapper = styled("div")({
 const StyledInnerWrapper = styled("div")({
   display: "flex",
   gap: "10px",
+});
+
+const StyledListItem = styled("li")({
+  textTransform: "capitalize",
 });
 
 interface CategoriesSelectProps {
@@ -34,13 +38,23 @@ export const CategoriesSelect = ({
           renderInput={(params) => (
             <TextField {...params} placeholder="Select" hiddenLabel />
           )}
-          onChange={(_, values) => {
+          onChange={(_, values, reason) => {
+            if (reason === "removeOption") return;
             const lastValue = values[values.length - 1];
 
             if (typeof lastValue === "string" && !!lastValue) {
+              const lastValueLower = lastValue.toLowerCase();
               const oldValues = values.slice(0, -1) as CategoryType[];
-              if (oldValues.some((e) => e.name === lastValue)) return;
-              onChange([...oldValues, { name: lastValue }]);
+              if (oldValues.some((e) => e.name === lastValueLower)) return;
+              const existingCategory = categories.find(
+                (e) => e.name === lastValueLower
+              );
+              if (existingCategory) {
+                onChange([...oldValues, existingCategory]);
+                console.log("existingCategory");
+                return;
+              }
+              onChange([...oldValues, { name: lastValueLower }]);
             } else {
               onChange(values as CategoryType[]);
             }
@@ -54,7 +68,9 @@ export const CategoriesSelect = ({
           disablePortal
           multiple
           filterSelectedOptions
-          renderOption={(props, option) => <li {...props}>{option.name}</li>}
+          renderOption={(props, option) => (
+            <StyledListItem {...props}>{option.name}</StyledListItem>
+          )}
           value={values || []}
           disableClearable
           renderTags={() => ""}
@@ -63,6 +79,7 @@ export const CategoriesSelect = ({
           options={categories}
         />
       </StyledInnerWrapper>
+      <Typography>{`Wybrano kategori: ${values.length}`}</Typography>
       <CardOptions
         values={values || []}
         onDelete={(option) =>

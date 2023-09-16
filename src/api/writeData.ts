@@ -23,19 +23,13 @@ const isCategoryExist = async (name: string) => {
 
 const isSongExistInCategory = async (
   songsCollRef: CollectionReference<DocumentData, DocumentData>,
-  name: string,
-  source: string
+  name: string
 ) => {
-  const q = query(
-    songsCollRef,
-    where("title", "==", name),
-    where("source", "==", source)
-  );
+  const q = query(songsCollRef, where("title", "==", name));
   const id = await getDocs(q).then((querySnapshot) => {
     const ids = querySnapshot.docs.map((doc) => doc.id);
     return ids.length ? ids[0] : undefined;
   });
-  console.log(id);
   return !!id;
 };
 
@@ -62,16 +56,14 @@ export const saveSong = async (data: SongFormInputType) => {
   const { categories, ...song } = data;
   const categoriesIds = await addNewCategories(categories);
   const categoryCollRef = collection(db, "categories");
+  let countExisting = 0;
+  let countAdded = 0;
 
   for (const element of categoriesIds) {
     const categoryDocRef = doc(categoryCollRef, element);
     const songsCollRef = collection(categoryDocRef, "songs");
-    const isExist = await isSongExistInCategory(
-      songsCollRef,
-      data.title,
-      data.source
-    );
-    console.log(element, isExist);
+    const isExist = await isSongExistInCategory(songsCollRef, data.title);
+
     if (!isExist) {
       const docRef = await addDoc(songsCollRef, song);
       console.log(
@@ -82,6 +74,10 @@ export const saveSong = async (data: SongFormInputType) => {
         " to category ",
         element
       );
+      countAdded = +1;
+    } else {
+      countExisting = +1;
     }
   }
+  return { countExisting, countAdded };
 };

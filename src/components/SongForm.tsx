@@ -8,6 +8,7 @@ import {
   styled,
 } from "@mui/material";
 import { CategoriesSelect } from "./CategoriesSelect";
+import * as yup from "yup";
 import { saveSong } from "../api/writeData";
 import { CategoryType } from "../types";
 
@@ -31,13 +32,41 @@ const StyledWrapper = styled("div")({
   flexDirection: "column",
 });
 
+const StyledErrorMessage = styled("p")({
+  color: "#d32f2f",
+});
+
+const validationSchema = yup.object({
+  title: yup
+    .string()
+    .required("Tytuł piosenki jest wymagany.")
+    .min(2, "co najmniej 2 znaki")
+    .max(50, "co najwyżej 50 znaków"),
+  source: yup
+    .string()
+    .required("Autor jest wymagany")
+    .min(2, "co najmniej 2 znaki")
+    .max(30, "co najwyżej 30 znaków"),
+  lyrics: yup
+    .string()
+    .required("Tekst piosenki jest wymagany")
+    .max(250, "co najwyżej 250 znaków")
+    .min(15, "co najmniej 15 znaków"),
+  categories: yup.array().min(1, "co najmniej jedna kategoria jest wymagana"),
+});
+
 const SongForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: SongFormValues, { resetForm }) => {
     setLoading(true);
     try {
-      await saveSong({ ...values, lyrics: values.lyrics.replace(/\n/g, "$") });
+      await saveSong({
+        ...values,
+        title: values.title.toLowerCase(),
+        source: values.source.toLowerCase(),
+        lyrics: values.lyrics.replace(/\n/g, "$"),
+      });
       resetForm({ values: initialValues });
     } catch (error) {
       console.log(error);
@@ -54,7 +83,11 @@ const SongForm: React.FC = () => {
   }
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
+    >
       {({ values, setFieldValue, ...props }) => (
         <Form>
           <StyledWrapper>
@@ -66,7 +99,7 @@ const SongForm: React.FC = () => {
               margin="dense"
               onChange={props.handleChange}
               onBlur={props.handleBlur}
-              helperText={<ErrorMessage name="name" />}
+              helperText={<ErrorMessage name="title" />}
               error={!!(props.errors.title && props.touched.title)}
               required
             />
@@ -103,13 +136,16 @@ const SongForm: React.FC = () => {
             <Typography>
               Podaj co najmniej jedną kategorię do której pasuje ta piosenka.{" "}
               <br />
-              Możesz również dodać nową kategorię.
+              Możesz również dodać nową kategorię klikając enter.
             </Typography>
             <CategoriesSelect
               values={values.categories}
               loading={loading}
               onChange={(e) => setFieldValue("categories", e)}
             />
+            <StyledErrorMessage>
+              <ErrorMessage name="categories" />
+            </StyledErrorMessage>
 
             <Button variant="contained" type="submit" color="primary" fullWidth>
               Zapisz
